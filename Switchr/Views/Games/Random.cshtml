@@ -1,0 +1,25 @@
+﻿@model Switchr.ViewModels.RandomGameViewModel
+
+@{
+    ViewBag.Title = "Random";
+}
+
+@{ 
+    var popular = Model.Customers.Count > 0 ? "popular" : null;
+}
+
+<h2 class="@popular">@Model.Game.Name</h2>
+
+@if (Model.Customers.Count == 0)
+{
+    <p>No one has rented this game yet.</p>
+}
+else
+{
+    <ul>
+        @foreach (var customer in Model.Customers)
+        {
+            <li>@customer.Name</li>
+        }
+    </ul>
+}

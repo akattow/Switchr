@@ -1,0 +1,38 @@
+﻿@model Switchr.ViewModels.GameFormViewModel
+
+@{
+    ViewBag.Title = Model.Title;
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>@Model.Title</h2>
+
+@using (Html.BeginForm("Save", "Games"))
+{
+    <p>*All fields are required.</p>
+    @Html.ValidationSummary(true, "Please complete the form.", new { @class = "text-danger" })
+    <div class="form-group">
+        @Html.LabelFor(m => m.Game.Name)
+        @Html.TextBoxFor(m => m.Game.Name, new { @class = "form-control" })
+        @Html.ValidationMessageFor(m => m.Game.Name, "", new { @class = "text-danger"})
+    </div>
+    <div class="form-group">
+        @Html.LabelFor(m => m.Game.ReleaseDate, "Release Date")
+        @Html.TextBoxFor(m => m.Game.ReleaseDate, "{0:d}", new { @class = "form-control" })
+        @Html.ValidationMessageFor(m => m.Game.ReleaseDate, "", new { @class = "text-danger" })
+    </div>
+    <div class="form-group">
+        @Html.LabelFor(m => m.Game.GameTypeId, "Type of Game")
+        @Html.DropDownListFor(m => m.Game.GameTypeId, new SelectList(Model.GameTypes, "Id", "Name"), "Select Game Type", new { @class = "form-control" })
+        @Html.ValidationMessageFor(m => m.Game.GameTypeId, "", new { @class = "text-danger" })
+    </div>
+    <div class="form-group">
+        @Html.LabelFor(m => m.Game.NumberInStock, "Number in Stock")
+        @Html.TextBoxFor(m => m.Game.NumberInStock, new { @class = "form-control", @type = "number" })
+        @Html.ValidationMessageFor(m => m.Game.NumberInStock, "", new { @class = "text-danger" })
+    </div>
+
+    @Html.HiddenFor(m => m.Game.Id)
+    @Html.AntiForgeryToken()
+    <button type="submit" class="btn btn-primary">Save</button>
+}
