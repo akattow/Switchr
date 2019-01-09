@@ -30,7 +30,10 @@ namespace Switchr.Controllers
 
             //return View(games);
 
-            return View();
+            if (User.IsInRole(RoleName.CanManageGames))
+                return View("List");
+            else
+                return View("ReadOnlyList");
         }
 
         public ActionResult Details(int id)
@@ -44,6 +47,7 @@ namespace Switchr.Controllers
         }
 
         // GET: Games/New
+        [Authorize(Roles = RoleName.CanManageGames)]
         public ActionResult New()
         {
             var gameTypes = _context.GameTypes.ToList();
@@ -57,6 +61,7 @@ namespace Switchr.Controllers
         }
 
         // GET: Games/Edit/#
+        [Authorize(Roles = RoleName.CanManageGames)]
         public ActionResult Edit(int id)
         {
             var game = _context.Games.SingleOrDefault(g => g.Id == id);
@@ -76,6 +81,7 @@ namespace Switchr.Controllers
         // POST
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = RoleName.CanManageGames)]
         public ActionResult Save(Game game)
         {
             if(!ModelState.IsValid)
@@ -127,26 +133,6 @@ namespace Switchr.Controllers
 
             return View(viewModel);
         }
-
-
-        // GET: Games/Released/{year}/{month}
-
-        [Route("games/released/{year:regex(\\d{4})}/{month:regex(\\d{2}):range(1,12)}")]
-        public ActionResult ByReleaseDate(int year, int month)
-        {
-            return Content(year + "/" + month);
-        }
-
-        //public ActionResult Index(int? pageIndex, string sortBy)
-        //{
-        //    if (!pageIndex.HasValue)
-        //        pageIndex = 1;
-        //    if (String.IsNullOrWhiteSpace(sortBy))
-        //        sortBy = "Name";
-
-        //    return Content(String.Format("pageIndex={0}&sortBy={1}", pageIndex, sortBy));
-        //}
-
         */
     }
 }

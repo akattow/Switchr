@@ -14,7 +14,6 @@ namespace Switchr.Models
         [StringLength(255)]
         public string Name { get; set; }
 
-        [Required]
         public GameType GameType { get; set; }
 
         [Required]
@@ -23,11 +22,13 @@ namespace Switchr.Models
 
         [Required]
         [Display(Name = "Release Date")]
-        public DateTime? ReleaseDate { get; set; }
+        public DateTime ReleaseDate { get; set; }
 
         [Required]
         [Range(1,100)]
         [Display(Name = "Number In Stock")]
         public int NumberInStock { get; set; }
+
+        public int NumberAvailable { get; set; }
     }
 }

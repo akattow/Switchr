@@ -1,0 +1,45 @@
+﻿@model IEnumerable<Switchr.Models.Game>
+
+@{
+    ViewBag.Title = "Games";
+}
+
+<h2>Games</h2>
+
+<table id="games" class="table table-hover table-bordered">
+    <thead>
+        <tr>
+            <th>Games</th>
+            <th>Genre</th>
+        </tr>
+    </thead>
+    <tbody>
+    </tbody>
+
+</table>
+
+@section scripts
+{
+    <script>
+        $(document).ready(function () {
+
+            var table = $("#games").DataTable({
+                ajax: {
+                    url: "/api/games",
+                    dataSrc: ""
+                },
+                columns: [
+                    {
+                        data: "name",
+                        //render: function (data, type, game) {
+                        //    return "<a href='/games/edit/" + game.id + "'>" + game.name + "</a>";
+                        //}
+                    },
+                    {
+                        data: "gameType.name"
+                    }
+                ]
+            });
+        });
+    </script>
+}

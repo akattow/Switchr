@@ -20,7 +20,7 @@
     <MvcBuildViews>false</MvcBuildViews>
     <UseIISExpress>true</UseIISExpress>
     <Use64BitIISExpress />
-    <IISExpressSSLPort />
+    <IISExpressSSLPort>44358</IISExpressSSLPort>
     <IISExpressAnonymousAuthentication />
     <IISExpressWindowsAuthentication />
     <IISExpressUseClassicPipelineMode />
@@ -208,14 +208,17 @@
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\API\CustomersController.cs" />
     <Compile Include="Controllers\API\GamesController.cs" />
+    <Compile Include="Controllers\API\NewRentalController.cs" />
     <Compile Include="Controllers\CustomersController.cs" />
     <Compile Include="Controllers\GamesController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\ManageController.cs" />
+    <Compile Include="Controllers\RentalsController.cs" />
     <Compile Include="DTOs\GamesDto.cs" />
     <Compile Include="DTOs\CustomerDto.cs" />
     <Compile Include="DTOs\GameTypeDto.cs" />
     <Compile Include="DTOs\MembershipTypeDto.cs" />
+    <Compile Include="DTOs\NewRentalDto.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
@@ -287,15 +290,30 @@
     <Compile Include="Migrations\201901020005278_UpdateGameModelToRequired.Designer.cs">
       <DependentUpon>201901020005278_UpdateGameModelToRequired.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201901031900085_SeedUsers.cs" />
+    <Compile Include="Migrations\201901031900085_SeedUsers.Designer.cs">
+      <DependentUpon>201901031900085_SeedUsers.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201901081834590_AddRentals.cs" />
+    <Compile Include="Migrations\201901081834590_AddRentals.Designer.cs">
+      <DependentUpon>201901081834590_AddRentals.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201901081956167_AddNumberAvailableToGames.cs" />
+    <Compile Include="Migrations\201901081956167_AddNumberAvailableToGames.Designer.cs">
+      <DependentUpon>201901081956167_AddNumberAvailableToGames.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
     <Compile Include="Models\Customer.cs" />
     <Compile Include="Models\Game.cs" />
     <Compile Include="Models\GameType.cs" />
-    <Compile Include="Models\IdentityModels.cs" />
+    <Compile Include="Models\ApplicationDbContext.cs" />
+    <Compile Include="Models\ApplicationUser.cs" />
     <Compile Include="Models\ManageViewModels.cs" />
     <Compile Include="Models\MembershipType.cs" />
     <Compile Include="Models\Min18YearsIfAMember.cs" />
+    <Compile Include="Models\Rental.cs" />
+    <Compile Include="Models\RoleName.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Startup.cs" />
     <Compile Include="ViewModels\CustomerFormViewModel.cs" />
@@ -467,12 +485,17 @@
     <Content Include="Content\DataTables\images\sort_desc.png" />
     <Content Include="Content\DataTables\images\sort_desc_disabled.png" />
     <Content Include="Content\DataTables\swf\flashExport.swf" />
+    <Content Include="Content\toastr.css" />
+    <Content Include="Content\toastr.min.css" />
+    <Content Include="Content\typeahead.css" />
     <Content Include="favicon.ico" />
     <Content Include="Global.asax" />
     <Content Include="Content\Site.css" />
     <Content Include="ApplicationInsights.config">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Content Include="Scripts\bloodhound.js" />
+    <Content Include="Scripts\bloodhound.min.js" />
     <Content Include="Scripts\bootbox.js" />
     <Content Include="Scripts\bootbox.min.js" />
     <Content Include="Scripts\bootstrap.bundle.js" />
@@ -576,6 +599,8 @@
     <Content Include="Content\DataTables\css\semanticui.scss" />
     <Content Include="Content\DataTables\css\mixins.scss" />
     <Content Include="Content\DataTables\css\common.scss" />
+    <Content Include="Content\toastr.scss" />
+    <Content Include="Content\toastr.less" />
     <None Include="Scripts\jquery-3.0.0-vsdoc.js" />
     <Content Include="Scripts\jquery-3.0.0.js" />
     <Content Include="Scripts\jquery-3.0.0.min.js" />
@@ -595,6 +620,12 @@
     <Content Include="Scripts\popper.min.js" />
     <Content Include="Scripts\respond.js" />
     <Content Include="Scripts\respond.min.js" />
+    <Content Include="Scripts\toastr.js" />
+    <Content Include="Scripts\toastr.min.js" />
+    <Content Include="Scripts\typeahead.bundle.js" />
+    <Content Include="Scripts\typeahead.bundle.min.js" />
+    <Content Include="Scripts\typeahead.jquery.js" />
+    <Content Include="Scripts\typeahead.jquery.min.js" />
     <Content Include="Scripts\umd\popper-utils.js" />
     <Content Include="Scripts\umd\popper-utils.min.js" />
     <Content Include="Scripts\umd\popper.js" />
@@ -635,7 +666,7 @@
     <Content Include="Views\Shared\_LoginPartial.cshtml" />
     <Content Include="Views\Games\Random.cshtml" />
     <Content Include="Views\Shared\_NavBar.cshtml" />
-    <Content Include="Views\Games\Index.cshtml" />
+    <Content Include="Views\Games\List.cshtml" />
     <Content Include="Views\Customers\Index.cshtml" />
     <Content Include="Views\Customers\Details.cshtml" />
     <Content Include="Views\Games\Details.cshtml" />
@@ -650,6 +681,8 @@
     <Content Include="Scripts\popper-utils.min.js.map" />
     <Content Include="Scripts\popper-utils.js.map" />
     <Content Include="Views\Games\GameForm.cshtml" />
+    <Content Include="Views\Games\ReadOnlyList.cshtml" />
+    <Content Include="Views\Rentals\New.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
@@ -709,6 +742,15 @@
     <EmbeddedResource Include="Migrations\201901020005278_UpdateGameModelToRequired.resx">
       <DependentUpon>201901020005278_UpdateGameModelToRequired.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201901031900085_SeedUsers.resx">
+      <DependentUpon>201901031900085_SeedUsers.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201901081834590_AddRentals.resx">
+      <DependentUpon>201901081834590_AddRentals.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201901081956167_AddNumberAvailableToGames.resx">
+      <DependentUpon>201901081956167_AddNumberAvailableToGames.cs</DependentUpon>
+    </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
     <TypeScriptCompile Include="Scripts\index.d.ts" />
@@ -735,7 +777,7 @@
           <AutoAssignPort>True</AutoAssignPort>
           <DevelopmentServerPort>55293</DevelopmentServerPort>
           <DevelopmentServerVPath>/</DevelopmentServerVPath>
-          <IISUrl>http://localhost:55293/</IISUrl>
+          <IISUrl>https://localhost:44358/</IISUrl>
           <NTLMAuthentication>False</NTLMAuthentication>
           <UseCustomServer>False</UseCustomServer>
           <CustomServerUrl>

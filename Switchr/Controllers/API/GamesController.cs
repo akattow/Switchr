@@ -22,10 +22,16 @@ namespace Switchr.Controllers.API
         }
 
         // GET: /api/games
-        public IHttpActionResult GetGames()
+        public IHttpActionResult GetGames(string query = null)
         {
-            var gameDtos = _context.Games
+            var gamesQuery = _context.Games
                 .Include(g => g.GameType)
+                .Where(g => g.NumberAvailable > 0);
+
+            if (!String.IsNullOrWhiteSpace(query))
+                gamesQuery = gamesQuery.Where(g => g.Name.Contains(query));
+
+            var gameDtos =gamesQuery
                 .ToList()
                 .Select(Mapper.Map<Game, GameDto>);
 
@@ -45,6 +51,7 @@ namespace Switchr.Controllers.API
 
         // POST: /api/games
         [HttpPost]
+        [Authorize(Roles = RoleName.CanManageGames)]
         public IHttpActionResult AddGame(GameDto gameDto)
         {
             if (!ModelState.IsValid)
@@ -61,6 +68,7 @@ namespace Switchr.Controllers.API
 
         // PUT: /api/games/#
         [HttpPut]
+        [Authorize(Roles = RoleName.CanManageGames)]
         public IHttpActionResult UpdateGame(int id, GameDto gameDto)
         {
             if (!ModelState.IsValid)
@@ -80,6 +88,7 @@ namespace Switchr.Controllers.API
 
         // DELETE: /api/customers/#
         [HttpDelete]
+        [Authorize(Roles = RoleName.CanManageGames)]
         public IHttpActionResult DeleteGame(int id)
         {
             var gameInDb = _context.Games.SingleOrDefault(g => g.Id == id);
